@@ -13,13 +13,15 @@ public class ServerSide extends Thread
     private ServerSocket serverSocket;
     private HashMap<String, Socket> connections;
     public boolean run;
+    public int ver;
 
-    public ServerSide(int port) throws IOException
+    public ServerSide(int port, int ver) throws IOException
     {
         connections = new HashMap<>();
         serverSocket = new ServerSocket(port);
         serverSocket.setSoTimeout(1000);
         run = true;
+        this.ver = ver;
     }
 
     public void run()
@@ -28,6 +30,7 @@ public class ServerSide extends Thread
         String name;
         DataInputStream in;
         DataOutputStream out;
+        int cver;
         System.out.println("Waiting for client(s) on port " +
                 serverSocket.getLocalPort() + "...");
         while (run)
@@ -44,14 +47,25 @@ public class ServerSide extends Thread
                 System.out.println("Creating input / output streams");
 
                 System.out.println(in.readUTF());
-                out.writeUTF("Requesting : Player Name");
+                out.writeUTF("RQ:NAME");
                 name = in.readUTF();
+                out.writeUTF("RQ:VER");
+                cver = in.readInt();
 
+                if (!(cver == ver))
+                {
+                    out.writeUTF("Invalid Version Error\nSever Version : " + ver + "\nYour Version : " + cver);
+                    server.close();
+                    break;
+                }
+                out.writeUTF("MSG");
+                in.readUTF();
                 out.writeUTF("Welcome to JDungeon from " + server.getLocalSocketAddress());
+                in.readUTF();
 
                 connections.put(name, server);
                 System.out.println("Added new player socket under name : " + name);
-
+                System.out.print("=> ");
             } catch (SocketTimeoutException s) { } catch (IOException e)
             {
                 e.printStackTrace();

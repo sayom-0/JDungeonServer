@@ -38,6 +38,13 @@ public class JDCLI extends Thread
                     System.out.println("Exiting, thank you for hosting JDungeon!");
                     break;
 
+                case "say":
+                    for(int i = 0; i != con.size(); i++)
+                    {
+
+                    }
+                    break;
+
                 default:
                     System.out.println("Unrecognized Command");
                     break;
