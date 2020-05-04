@@ -58,6 +58,7 @@ public class ServerSide extends Thread
                     server.close();
                     break;
                 }
+
                 out.writeUTF("MSG");
                 in.readUTF();
                 out.writeUTF("Welcome to JDungeon from " + server.getLocalSocketAddress());
@@ -65,6 +66,23 @@ public class ServerSide extends Thread
 
                 connections.put(name, server);
                 System.out.println("Added new player socket under name : " + name);
+                System.out.println("Announcing join");
+                for (int i = 0; i != connections.size(); i++)
+                {
+                    server = (Socket) connections.values().toArray()[i];
+                    try
+                    {
+                        in = new DataInputStream(server.getInputStream());
+                        out = new DataOutputStream(server.getOutputStream());
+                        out.writeUTF("MSG");
+                        in.readUTF();
+                        out.writeUTF(name + " has joined the Junjeon crawl!");
+                        in.readUTF();
+                    } catch (IOException e)
+                    {
+                        e.printStackTrace();
+                    }
+                }
                 System.out.print("=> ");
             } catch (SocketTimeoutException s) { } catch (IOException e)
             {

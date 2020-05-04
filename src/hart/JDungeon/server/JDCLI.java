@@ -1,5 +1,8 @@
 package hart.JDungeon.server;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.net.Socket;
 import java.util.HashMap;
 import java.util.Scanner;
@@ -27,7 +30,7 @@ public class JDCLI extends Thread
             switch (scan.nextLine())
             {
                 case "list":
-                    if(!con.isEmpty())
+                    if (!con.isEmpty())
                         System.out.println(con);
                     else
                         System.out.println("No player sockets registered in connections HashMap");
@@ -39,9 +42,37 @@ public class JDCLI extends Thread
                     break;
 
                 case "say":
-                    for(int i = 0; i != con.size(); i++)
+                    System.out.print("Message => ");
+                    String msg = scan.nextLine();
+                    Socket server;
+                    DataInputStream in;
+                    DataOutputStream out;
+                    for (int i = 0; i != con.size(); i++)
                     {
+                        server = (Socket) con.values().toArray()[i];
+                        try
+                        {
+                            in = new DataInputStream(server.getInputStream());
+                            out = new DataOutputStream(server.getOutputStream());
+                            out.writeUTF("MSG");
+                            in.readUTF();
+                            out.writeUTF(msg);
+                            in.readUTF();
+                        } catch (IOException e)
+                        {
+                            e.printStackTrace();
+                        }
+                    }
+                    break;
 
+                case "kick":
+                    System.out.print("Name => ");
+                    try
+                    {
+                        con.remove(scan.nextLine()).close();
+                    } catch (IOException e)
+                    {
+                        e.printStackTrace();
                     }
                     break;
 
