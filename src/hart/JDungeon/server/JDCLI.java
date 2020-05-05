@@ -1,8 +1,8 @@
 package hart.JDungeon.server;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.HashMap;
 import java.util.Scanner;
@@ -45,15 +45,15 @@ public class JDCLI extends Thread
                     System.out.print("Message => ");
                     String msg = scan.nextLine();
                     Socket server;
-                    DataInputStream in;
-                    DataOutputStream out;
+                    ObjectInputStream in;
+                    ObjectOutputStream out;
                     for (int i = 0; i != con.size(); i++)
                     {
                         server = (Socket) con.values().toArray()[i];
                         try
                         {
-                            in = new DataInputStream(server.getInputStream());
-                            out = new DataOutputStream(server.getOutputStream());
+                            in = new ObjectInputStream(server.getInputStream());
+                            out = new ObjectOutputStream(server.getOutputStream());
                             out.writeUTF("MSG");
                             in.readUTF();
                             out.writeUTF(msg);

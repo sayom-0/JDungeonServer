@@ -11,7 +11,8 @@ public class Launcher
     {
         ServerSide t = null;
         JDCLI cli = null;
-        int ver = 7;
+        GameServer dm = null;
+        int ver = 8;
         boolean run = true;
 
         System.out.print("Starting JDungeon Server Alpha Version " + ver + "\n    Specify Port : ");
