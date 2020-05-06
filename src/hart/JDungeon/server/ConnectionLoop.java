@@ -3,7 +3,6 @@ package hart.JDungeon.server;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.net.Socket;
 import java.util.ArrayList;
 
 public class ConnectionLoop extends Thread
@@ -30,17 +29,14 @@ public class ConnectionLoop extends Thread
         System.out.println("Starting connection thread for socket : " + info);
         while (true)
         {
-            if (System.currentTimeMillis() - 500 >= Last)
+            if (System.currentTimeMillis() - 1500 >= Last)
             {
                 try
                 {
                     out.writeObject("RQ:INFO");
                     report.addAll((ArrayList<String>) in.readObject());
                     out.writeObject(OutInfo);
-                } catch (IOException e)
-                {
-                    e.printStackTrace();
-                } catch (ClassNotFoundException e)
+                } catch (IOException | ClassNotFoundException e)
                 {
                     e.printStackTrace();
                 }

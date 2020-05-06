@@ -9,7 +9,7 @@ public class Launcher
 
     public static void main(String[] args)
     {
-        ServerSide t = null;
+        ServerSide server = null;
         JDCLI cli = null;
         GameServer dm = null;
         int ver = 8;
@@ -20,9 +20,9 @@ public class Launcher
 
         try
         {
-            t = new ServerSide(port, ver);
-            t.start();
-            cli = new JDCLI(t.getCon(), scan);
+            server = new ServerSide(port, ver);
+            server.start();
+            cli = new JDCLI(server.getCon(), server.getOuts(), server.getIns(), scan);
             cli.start();
         } catch (IOException e)
         {
@@ -32,12 +32,14 @@ public class Launcher
 
         while (run)
         {
-            if(!cli.isAlive())
+            if (!cli.isAlive())
             {
-                t.run = false;
+                server.run = false;
                 run = false;
             }
         }
+
+        System.exit(0);
 
     }
 }

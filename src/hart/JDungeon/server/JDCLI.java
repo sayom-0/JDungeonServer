@@ -11,13 +11,17 @@ public class JDCLI extends Thread
 {
     private Scanner scan;
     private HashMap<String, Socket> con;
+    private HashMap<Socket, ObjectOutputStream> outs;
+    private HashMap<Socket, ObjectInputStream> ins;
     private boolean run;
 
-    public JDCLI(HashMap<String, Socket> con, Scanner scan)
+    public JDCLI(HashMap<String, Socket> con, HashMap<Socket, ObjectOutputStream> outs, HashMap<Socket, ObjectInputStream> ins, Scanner scan)
     {
         this.scan = scan;
         this.con = con;
         this.run = true;
+        this.outs = outs;
+        this.ins = ins;
         System.out.println("Creating CLI Thread");
     }
 
@@ -49,16 +53,13 @@ public class JDCLI extends Thread
                     ObjectOutputStream out;
                     for (int i = 0; i != con.size(); i++)
                     {
-                        server = (Socket) con.values().toArray()[i];
                         try
                         {
-                            in = new ObjectInputStream(server.getInputStream());
-                            out = new ObjectOutputStream(server.getOutputStream());
-                            out.writeUTF("MSG");
-                            in.readUTF();
-                            out.writeUTF(msg);
-                            in.readUTF();
-                        } catch (IOException e)
+                            outs.get(con.values().toArray()[i]).writeObject("MSG");
+                            ins.get(con.values().toArray()[i]).readObject();
+                            outs.get(con.values().toArray()[i]).writeObject(msg);
+                            ins.get(con.values().toArray()[i]).readObject();
+                        } catch (IOException | ClassNotFoundException e)
                         {
                             e.printStackTrace();
                         }

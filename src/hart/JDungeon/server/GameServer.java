@@ -10,14 +10,18 @@ import java.util.HashMap;
 public class GameServer extends Thread
 {
     private HashMap<String, Socket> con;
+    private HashMap<Socket, ObjectOutputStream> outs;
+    private HashMap<Socket, ObjectInputStream> ins;
     private ArrayList<String> out, in;
     private long Last;
 
-    public GameServer(HashMap<String, Socket> con, ArrayList<String> out, ArrayList<String> in)
+    public GameServer(HashMap<String, Socket> con, HashMap<Socket, ObjectOutputStream> outs, HashMap<Socket, ObjectInputStream> ins, ArrayList<String> out, ArrayList<String> in)
     {
         this.con = con;
         this.out = out;
         this.in = in;
+        this.outs = outs;
+        this.ins = ins;
         Last = System.currentTimeMillis();
     }
 
@@ -36,20 +40,14 @@ public class GameServer extends Thread
                     }
                     else if (msg.charAt(0) == '!')
                     {
-                        Socket server;
-                        ObjectInputStream in;
-                        ObjectOutputStream out;
                         for (int i = 0; i != con.size(); i++)
                         {
-                            server = (Socket) con.values().toArray()[i];
                             try
                             {
-                                in = new ObjectInputStream(server.getInputStream());
-                                out = new ObjectOutputStream(server.getOutputStream());
-                                out.writeObject("MSG");
-                                in.readObject();
-                                out.writeObject(msg);
-                                in.readObject();
+                                outs.get(con.values().toArray()[i]).writeObject("MSG");
+                                ins.get(con.values().toArray()[i]).readObject();
+                                outs.get(con.values().toArray()[i]).writeObject(msg);
+                                ins.get(con.values().toArray()[i]).readObject();
                             } catch (IOException | ClassNotFoundException e)
                             {
                                 e.printStackTrace();
